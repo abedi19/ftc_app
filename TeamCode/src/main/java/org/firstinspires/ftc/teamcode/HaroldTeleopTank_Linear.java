@@ -59,7 +59,7 @@ public class HaroldTeleopTank_Linear extends LinearOpMode {
 
     /* Declare OpMode members. */
     HardwareHarold robot           = new HardwareHarold();              // Use Harold's hardware
-//    double          armPosition     = robot.ARM_HOME;                   // Servo safe position
+   double          whackerPosition     = 0.5;                   // Servo safe position
 //    double          clawPosition    = robot.CLAW_HOME;                  // Servo safe position
 //    final double    CLAW_SPEED      = 0.01 ;                            // sets rate to move servo
 //    final double    ARM_SPEED       = 0.01 ;                            // sets rate to move servo
@@ -68,6 +68,8 @@ public class HaroldTeleopTank_Linear extends LinearOpMode {
     public void runOpMode() {
         double left;
         double right;
+        double up;
+        double down;
 
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
@@ -90,12 +92,20 @@ public class HaroldTeleopTank_Linear extends LinearOpMode {
             robot.leftMotor.setPower(left);
             robot.rightMotor.setPower(right);
 
+            // triggers lifters
+            if(gamepad1.left_trigger >0) {
+                robot.lifter.setPower(1*gamepad1.left_trigger);
+            } else if (gamepad1.right_trigger>0){
+                robot.lifter.setPower(-1*gamepad1.right_trigger);
+            } else {
+                robot.lifter.setPower(0.0);
+            }
             //TODO: Servos
             // Use gamepad Y & A raise and lower the arm
-//            if (gamepad1.a)
-//                armPosition += ARM_SPEED;
-//            else if (gamepad1.y)
-//                armPosition -= ARM_SPEED;
+            if (gamepad1.a)
+                whackerPosition += 0.1;
+            else if (gamepad1.y)
+                whackerPosition -= 0.1;
 //
 //            // Use gamepad X & B to open and close the claw
 //            if (gamepad91.x)
@@ -104,7 +114,7 @@ public class HaroldTeleopTank_Linear extends LinearOpMode {
 //                clawPosition -= CLAW_SPEED;
 //
 //            // Move both servos to new position.
-//            armPosition  = Range.clip(armPosition, robot.ARM_MIN_RANGE, robot.ARM_MAX_RANGE);
+            whackerPosition  = Range.clip(whackerPosition, 0.0, 1.0);
 //            robot.arm.setPosition(armPosition);
 //            clawPosition = Range.clip(clawPosition, robot.CLAW_MIN_RANGE, robot.CLAW_MAX_RANGE);
 //            robot.claw.setPosition(clawPosition);
