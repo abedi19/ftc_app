@@ -29,6 +29,8 @@ public class HardwareHarold
     public DcMotor  rightMotor  = null;
     public DcMotor lifter = null;
     public Servo whacker =null;
+    public Servo leftArm = null;
+    public Servo rightArm = null;
 
     public static final double MID_SERVO       =  0.5 ;
     public static final double ARM_UP_POWER    =  0.45 ;
@@ -69,8 +71,12 @@ public class HardwareHarold
 
         // Define and initialize ALL installed servos.
         whacker = hwMap.servo.get("stick_servo");
+        leftArm = hwMap.servo.get("lf");
+        rightArm = hwMap.servo.get("rf");
 //        rightClaw = hwMap.servo.get("right_hand");
-        whacker.setPosition(0.5);
+        whacker.setPosition(0.0);
+        leftArm.setPosition(0.5);
+        rightArm.setPosition(0.5);
 //        rightClaw.setPosition(MID_SERVO);
     }
 
