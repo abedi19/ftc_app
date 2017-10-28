@@ -59,7 +59,9 @@ public class HaroldTeleopTank_Linear extends LinearOpMode {
 
     /* Declare OpMode members. */
     HardwareHarold robot           = new HardwareHarold();              // Use Harold's hardware
-   double          whackerPosition     = 0.5;                   // Servo safe position
+   double          whackerPosition     = 0.0;                   // Servo safe position
+    double leftArmPosition= 0.5;
+    double rightArmPosition = 0.5;
 //    double          clawPosition    = robot.CLAW_HOME;                  // Servo safe position
 //    final double    CLAW_SPEED      = 0.01 ;                            // sets rate to move servo
 //    final double    ARM_SPEED       = 0.01 ;                            // sets rate to move servo
@@ -70,6 +72,7 @@ public class HaroldTeleopTank_Linear extends LinearOpMode {
         double right;
         double up;
         double down;
+        double position;
 
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
@@ -85,27 +88,47 @@ public class HaroldTeleopTank_Linear extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+            position =-1;
+            // Run wheels in tank mode
+            left = gamepad1.left_stick_y;
+            right = gamepad1.right_stick_y;
+            if(gamepad1.right_bumper){
+                robot.leftMotor.setPower(0.4*left);
+                robot.rightMotor.setPower(0.4*right);
+            } else {
+                robot.leftMotor.setPower(left);
+                robot.rightMotor.setPower(right);
+            }
 
-            // Run wheels in tank mode (note: The joystick goes negative when pushed forwards, so negate it)
-            left = -gamepad1.left_stick_y;
-            right = -gamepad1.right_stick_y;
-            robot.leftMotor.setPower(left);
-            robot.rightMotor.setPower(right);
+
 
             // triggers lifters
-            if(gamepad1.left_trigger >0) {
+            if(gamepad1.left_trigger >0 && (robot.lifter.getCurrentPosition() > -11.2) ) {
                 robot.lifter.setPower(1*gamepad1.left_trigger);
-            } else if (gamepad1.right_trigger>0){
+            } else if (gamepad1.right_trigger>0 && (robot.lifter.getCurrentPosition() < -12921.3)){
                 robot.lifter.setPower(-1*gamepad1.right_trigger);
             } else {
                 robot.lifter.setPower(0.0);
+
             }
             //TODO: Servos
             // Use gamepad Y & A raise and lower the arm
-            if (gamepad1.a)
-                whackerPosition += 0.1;
-            else if (gamepad1.y)
-                whackerPosition -= 0.1;
+            if (gamepad1.a) {
+                whackerPosition = 0;
+            }
+            else if (gamepad1.y) {
+                whackerPosition = 0.4;
+            }
+            if(gamepad1.x){
+                leftArmPosition -= 0.1;
+                rightArmPosition +=0.1;
+            } else if (gamepad1.b){
+                leftArmPosition += 0.1;
+                rightArmPosition -=0.1;
+            }
+            if(gamepad1.left_bumper){
+                position = robot.lifter.getCurrentPosition();
+            }
 //
 //            // Use gamepad X & B to open and close the claw
 //            if (gamepad91.x)
@@ -114,7 +137,13 @@ public class HaroldTeleopTank_Linear extends LinearOpMode {
 //                clawPosition -= CLAW_SPEED;
 //
 //            // Move both servos to new position.
-            whackerPosition  = Range.clip(whackerPosition, 0.0, 1.0);
+            // at 0 right is all the way in and left is all the way out
+            whackerPosition  = Range.clip(whackerPosition, 0.0, 0.6);
+            rightArmPosition = Range.clip(rightArmPosition, 0.3, 0.8);
+            leftArmPosition = Range.clip(leftArmPosition, 0.3,0.8);
+            robot.whacker.setPosition(whackerPosition);
+            robot.leftArm.setPosition(leftArmPosition);
+            robot.rightArm.setPosition(rightArmPosition);
 //            robot.arm.setPosition(armPosition);
 //            clawPosition = Range.clip(clawPosition, robot.CLAW_MIN_RANGE, robot.CLAW_MAX_RANGE);
 //            robot.claw.setPosition(clawPosition);
@@ -122,6 +151,7 @@ public class HaroldTeleopTank_Linear extends LinearOpMode {
 //            // Send telemetry message to signify robot running;
 //            telemetry.addData("arm",   "%.2f", armPosition);
 //            telemetry.addData("claw",  "%.2f", clawPosition);
+            telemetry.addData("position","%.2f", position);
             telemetry.addData("left",  "%.2f", left);
             telemetry.addData("right", "%.2f", right);
             telemetry.update();
