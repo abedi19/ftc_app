@@ -69,6 +69,9 @@ public class HardwareHarold
         lifter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
        // armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        leftMotor.setPower(0.0);
+        rightMotor.setPower(0.0);
+        lifter.setPower(0.0);
         // Define and initialize ALL installed servos.
         whacker = hwMap.servo.get("stick_servo");
         leftArm = hwMap.servo.get("lf");
