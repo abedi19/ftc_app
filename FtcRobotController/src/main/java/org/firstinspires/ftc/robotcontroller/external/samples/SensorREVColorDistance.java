@@ -38,6 +38,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.GyroSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
@@ -78,7 +79,6 @@ public class SensorREVColorDistance extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
         // get a reference to the color sensor.
         sensorColor = hardwareMap.get(ColorSensor.class, "sensor_color_distance");
 

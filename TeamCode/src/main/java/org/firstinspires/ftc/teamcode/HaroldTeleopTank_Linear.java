@@ -103,9 +103,9 @@ public class HaroldTeleopTank_Linear extends LinearOpMode {
 
 
             // triggers lifters
-            if(gamepad1.left_trigger >0 && (robot.lifter.getCurrentPosition() > -11.2) ) {
+            if(gamepad1.left_trigger >0) { //&& (robot.lifter.getCurrentPosition() < -11.2) ) {
                 robot.lifter.setPower(1*gamepad1.left_trigger);
-            } else if (gamepad1.right_trigger>0 && (robot.lifter.getCurrentPosition() < -12921.3)){
+            } else if (gamepad1.right_trigger>0) {// && (robot.lifter.getCurrentPosition() > -12921.3)){
                 robot.lifter.setPower(-1*gamepad1.right_trigger);
             } else {
                 robot.lifter.setPower(0.0);
