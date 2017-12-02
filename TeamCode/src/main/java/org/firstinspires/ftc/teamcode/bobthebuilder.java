@@ -26,12 +26,14 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcontroller.external.samples.ConceptVuforiaNavigation;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
@@ -65,9 +67,21 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  * is explained in {@link ConceptVuforiaNavigation}.
  */
 
-@Autonomous(name="Concept: VuMark Id", group ="Concept")
-@Disabled
-public class ConceptVuMarkIdentification extends LinearOpMode {
+@Autonomous(name="Red Dard", group ="hHrold")
+
+public class bobthebuilder extends LinearOpMode {
+    /* Declare OpMode members. */
+    HardwareHarold         robot   = new HardwareHarold();   // Use a Pushbot's hardware
+    private ElapsedTime runtime = new ElapsedTime();
+
+    static final double     COUNTS_PER_MOTOR_REV    = 1120;    // eg: AndyMark Motor Encoder
+    static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
+    static final double WHEEL_DIAMETER_CENTIMETERS = 10.16 ;     // For figuring circumference
+    static final double COUNTS_PER_CENTIMETERS = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+            (WHEEL_DIAMETER_CENTIMETERS * 3.1415);
+    static final double     DRIVE_SPEED             = 0.6;
+    static final double     TURN_SPEED              = 0.5;
+    public static String Position ="N";
 
     public static final String TAG = "Vuforia VuMark Sample";
 
@@ -125,8 +139,8 @@ public class ConceptVuMarkIdentification extends LinearOpMode {
         waitForStart();
 
         relicTrackables.activate();
-
-        while (opModeIsActive()) {
+        runtime.reset();
+        while (Position=="N"&& runtime.seconds() < 7) {
 
             /**
              * See if any of the instances of {@link relicTemplate} are currently visible.
@@ -135,35 +149,20 @@ public class ConceptVuMarkIdentification extends LinearOpMode {
              * UNKNOWN will be returned by {@link RelicRecoveryVuMark#from(VuforiaTrackable)}.
              */
             RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
-            if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
+            if (vuMark != RelicRecoveryVuMark.UNKNOWN ) {
 
                 /* Found an instance of the template. In the actual game, you will probably
                  * loop until this condition occurs, then move on to act accordingly depending
                  * on which VuMark was visible. */
                 telemetry.addData("VuMark", "%s visible", vuMark);
-
-                /* For fun, we also exhibit the navigational pose. In the Relic Recovery game,
-                 * it is perhaps unlikely that you will actually need to act on this pose information, but
-                 * we illustrate it nevertheless, for completeness. */
-                OpenGLMatrix pose = ((VuforiaTrackableDefaultListener)relicTemplate.getListener()).getPose();
-                telemetry.addData("Pose", format(pose));
-
-                /* We further illustrate how to decompose the pose into useful rotational and
-                 * translational components */
-                if (pose != null) {
-                    VectorF trans = pose.getTranslation();
-                    Orientation rot = Orientation.getOrientation(pose, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-
-                    // Extract the X, Y, and Z components of the offset of the target relative to the robot
-                    double tX = trans.get(0);
-                    double tY = trans.get(1);
-                    double tZ = trans.get(2);
-
-                    // Extract the rotational components of the target relative to the robot
-                    double rX = rot.firstAngle;
-                    double rY = rot.secondAngle;
-                    double rZ = rot.thirdAngle;
+                if(vuMark == RelicRecoveryVuMark.CENTER ){
+                    Position = "C";
+                } else if (vuMark == RelicRecoveryVuMark.LEFT){
+                    Position = "L";
+                } else if (vuMark == RelicRecoveryVuMark.RIGHT) {
+                    Position = "R";
                 }
+
             }
             else {
                 telemetry.addData("VuMark", "not visible");
@@ -171,9 +170,134 @@ public class ConceptVuMarkIdentification extends LinearOpMode {
 
             telemetry.update();
         }
+        if (Position == "C"){
+            waitForStart();
+            robot.leftArm.setPosition(0.3);
+            robot.rightArm.setPosition(0.5);
+            sleep(1000);
+            robot.lifter.setPower(-1);
+            sleep(700);
+            robot.lifter.setPower(0.0);
+            encoderDrive(TURN_SPEED,45.72,-45.72,4.0);
+            // Step through each leg of the path,
+            // Note: Reverse movement is obtained by setting a negative distance (not speed)
+            encoderDrive(DRIVE_SPEED,  81,  81, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
+            encoderDrive(TURN_SPEED,   30.48, -30.48, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout (12 inches did 180) (30.48 is 90)
+            encoderDrive(DRIVE_SPEED, 23, 23, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+            robot.leftArm.setPosition(0.8);
+            robot.rightArm.setPosition(0.0);
+            sleep(1000);
+            encoderDrive(DRIVE_SPEED,-6,-6,4.0);
+//        robot.leftArm.setPosition(0.3);
+//        robot.rightArm.setPosition(0.8);
+//        encoderDrive(DRIVE_SPEED,2,2,4.0);
+            robot.lifter.setPower(1);
+            sleep(650);
+            robot.lifter.setPower(0.0);
+            encoderDrive(DRIVE_SPEED,2,2,4.0);
+//        robot.leftClaw.setPosition(1.0);            // S4: Stop and close the claw.
+//        robot.rightClaw.setPosition(0.0);
+//        sleep(1000);     // pause for servos to move
+
+            telemetry.addData("Path", "Complete");
+            telemetry.update();
+        } else if (Position == "R"){
+            robot.leftArm.setPosition(0.3);
+            robot.rightArm.setPosition(0.5);
+            sleep(1000);
+            robot.lifter.setPower(-1);
+            sleep(700);
+            robot.lifter.setPower(0.0);
+            encoderDrive(TURN_SPEED,45.72,-45.72,4.0);
+            // Step through each leg of the path,
+            // Note: Reverse movement is obtained by setting a negative distance (not speed)
+            encoderDrive(DRIVE_SPEED,  65,  65, 5.0);  // code that determines which position
+            encoderDrive(TURN_SPEED,   30.48, -30.48, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout (12 inches did 180) (30.48 is 90)
+            encoderDrive(DRIVE_SPEED, 23, 23, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+            robot.leftArm.setPosition(0.8);
+            robot.rightArm.setPosition(0.0);
+            sleep(1000);
+            encoderDrive(DRIVE_SPEED,-6,-6,4.0);
+//        robot.leftArm.setPosition(0.3);
+//        robot.rightArm.setPosition(0.8);
+//        encoderDrive(DRIVE_SPEED,2,2,4.0);
+            robot.lifter.setPower(1);
+            sleep(650);
+            robot.lifter.setPower(0.0);
+            encoderDrive(DRIVE_SPEED,2,2,4.0);
+//        robot.leftClaw.setPosition(1.0);            // S4: Stop and close the claw.
+//        robot.rightClaw.setPosition(0.0);
+//        sleep(1000);     // pause for servos to move
+
+            telemetry.addData("Path", "Complete");
+            telemetry.update();
+        } else  {
+            robot.leftArm.setPosition(0.3);
+            robot.rightArm.setPosition(0.5);
+        }
     }
 
-    String format(OpenGLMatrix transformationMatrix) {
-        return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
+
+    /*
+     *  Method to perfmorm a relative move, based on encoder counts.
+     *  Encoders are not reset as the move is based on the current position.
+     *  Move will stop if any of three conditions occur:
+     *  1) Move gets to the desired position
+     *  2) Move runs out of time
+     *  3) Driver stops the opmode running.
+     */
+    public void encoderDrive(double speed,
+                             double leftCentimeters, double rightCentimeters,
+                             double timeoutS) {
+        int newLeftTarget;
+        int newRightTarget;
+        leftCentimeters = leftCentimeters *-1;
+        rightCentimeters = rightCentimeters*-1;
+        // Ensure that the opmode is still active
+        if (opModeIsActive()) {
+
+            // Determine new target position, and pass to motor controller
+            newLeftTarget = robot.leftMotor.getCurrentPosition() + (int)(leftCentimeters * COUNTS_PER_CENTIMETERS);
+            newRightTarget = robot.rightMotor.getCurrentPosition() + (int)(rightCentimeters * COUNTS_PER_CENTIMETERS);
+            robot.leftMotor.setTargetPosition(newLeftTarget);
+            robot.rightMotor.setTargetPosition(newRightTarget);
+
+            // Turn On RUN_TO_POSITION
+            robot.leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            robot.leftMotor.setPower(Math.abs(speed));
+            robot.rightMotor.setPower(Math.abs(speed));
+
+            // keep looping while we are still active, and there is time left, and both motors are running.
+            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+            // its target position, the motion will stop.  This is "safer" in the event that the robot will
+            // always end the motion as soon as possible.
+            // However, if you require that BOTH motors have finished their moves before the robot continues
+            // onto the next step, use (isBusy() || isBusy()) in the loop test.
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) &&
+                    (robot.leftMotor.isBusy() && robot.rightMotor.isBusy())) {
+
+                // Display it for the driver.
+                telemetry.addData("Path1",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
+                telemetry.addData("Path2",  "Running at %7d :%7d",
+                        robot.leftMotor.getCurrentPosition(),
+                        robot.rightMotor.getCurrentPosition());
+                telemetry.update();
+            }
+
+            // Stop all motion;
+            robot.leftMotor.setPower(0);
+            robot.rightMotor.setPower(0);
+
+            // Turn off RUN_TO_POSITION
+            robot.leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            //  sleep(250);   // optional pause after each move
+        }
     }
 }

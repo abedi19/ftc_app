@@ -29,13 +29,9 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.robotcontroller.external.samples.HardwareK9bot;
 
 /**
  * This OpMode uses the common HardwareK9bot class to define the devices on the robot.
@@ -54,9 +50,9 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwareK9bot;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Harold: Telop Tank", group="Harold")
+@TeleOp(name="Harold: 2 Telop Tank", group="Harold")
 
-public class HaroldTeleopTank_Linear extends LinearOpMode {
+public class HaroldTeleopTank_Linear2 extends LinearOpMode {
 
     /* Declare OpMode members. */
     HardwareHarold robot           = new HardwareHarold();              // Use Harold's hardware
@@ -111,89 +107,6 @@ public class HaroldTeleopTank_Linear extends LinearOpMode {
                 robot.lifter.setPower(0.0);
 
             }
-
-            //TODO:Preset positions
-            if(gamepad1.dpad_down) {
-                robot.lifter.setTargetPosition(-600);
-                robot.lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.lifter.setPower(1.0);
-                while (opModeIsActive() && robot.lifter.isBusy()) {
-                    // wait
-                    // added driving
-                    left = gamepad1.left_stick_y;
-                    right = gamepad1.right_stick_y;
-                    if(gamepad1.right_bumper){
-                        robot.leftMotor.setPower(0.4*left);
-                        robot.rightMotor.setPower(0.4*right);
-                    }  else {
-                        robot.leftMotor.setPower(left);
-                        robot.rightMotor.setPower(right);
-                    }
-                }
-                // Stop all motion;
-                robot.lifter.setPower(0);
-                robot.lifter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            } else if (gamepad1.dpad_left) {
-                robot.lifter.setTargetPosition(-3275);
-                robot.lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.lifter.setPower(1.0);
-                while (opModeIsActive() && robot.lifter.isBusy()) {
-                    // wait boyo
-                    left = gamepad1.left_stick_y;
-                    right = gamepad1.right_stick_y;
-                    if(gamepad1.right_bumper){
-                        robot.leftMotor.setPower(0.4*left);
-                        robot.rightMotor.setPower(0.4*right);
-                    }  else {
-                        robot.leftMotor.setPower(left);
-                        robot.rightMotor.setPower(right);
-                    }
-                }
-                // Stop all motion;
-                robot.lifter.setPower(0);
-                robot.lifter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            } else if (gamepad1.dpad_right) {
-                robot.lifter.setTargetPosition(-5752);
-                robot.lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.lifter.setPower(1.0);
-                while (opModeIsActive() && robot.lifter.isBusy()) {
-                    // wait boyo
-                    left = gamepad1.left_stick_y;
-                    right = gamepad1.right_stick_y;
-                    if(gamepad1.right_bumper){
-                        robot.leftMotor.setPower(0.4*left);
-                        robot.rightMotor.setPower(0.4*right);
-                    }  else {
-                        robot.leftMotor.setPower(left);
-                        robot.rightMotor.setPower(right);
-                    }
-                }
-                // Stop all motion;
-                robot.lifter.setPower(0);
-                robot.lifter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            } else if(gamepad1.dpad_up) {
-                robot.lifter.setTargetPosition(-1830);
-                robot.lifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.lifter.setPower(1.0);
-                while (opModeIsActive() && robot.lifter.isBusy()) {
-                    // wait boyo
-                    left = gamepad1.left_stick_y;
-                    right = gamepad1.right_stick_y;
-                    if(gamepad1.right_bumper){
-                        robot.leftMotor.setPower(0.4*left);
-                        robot.rightMotor.setPower(0.4*right);
-                    }  else {
-                        robot.leftMotor.setPower(left);
-                        robot.rightMotor.setPower(right);
-                    }
-                }
-                // Stop all motion;
-                robot.lifter.setPower(0);
-                robot.lifter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            }
-
-
-
             //TODO: Servos
             // Use gamepad Y & A raise and lower the arm
             if (gamepad1.a) {
@@ -214,10 +127,16 @@ public class HaroldTeleopTank_Linear extends LinearOpMode {
             }
 
 //
+//            // Use gamepad X & B to open and close the claw
+//            if (gamepad91.x)
+//                clawPosition += CLAW_SPEED;
+//            else if (gamepad1.b)
+//                clawPosition -= CLAW_SPEED;
+//
 //            // Move both servos to new position.
-            // at 0 left is all the way in and right is all the way out
+            // at 0 right is all the way in and left is all the way out
             whackerPosition  = Range.clip(whackerPosition, 0.0, 0.6);
-            rightArmPosition = Range.clip(rightArmPosition, 0.0, 0.5);
+            rightArmPosition = Range.clip(rightArmPosition, 0.3, 0.8);
             leftArmPosition = Range.clip(leftArmPosition, 0.3,0.8);
             robot.whacker.setPosition(whackerPosition);
             robot.leftArm.setPosition(leftArmPosition);
@@ -237,8 +156,5 @@ public class HaroldTeleopTank_Linear extends LinearOpMode {
             // Pause for 40 mS each cycle = update 25 times a second.
             sleep(40);
         }
-        robot.lifter.setPower(0.0);
-        robot.leftMotor.setPower(0.0);
-        robot.rightMotor.setPower(0.0);
     }
 }

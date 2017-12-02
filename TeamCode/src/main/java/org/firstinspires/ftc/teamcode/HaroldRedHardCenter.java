@@ -30,12 +30,9 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 
 /**
  * This file illustrates the concept of driving a path based on encoder counts.
@@ -64,20 +61,20 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Pushbot: Auto Drive By Encoder", group="Pushbot")
+@Autonomous(name="Harold: Red Center Hard", group="Harold")
 
 
-public class HaroldAutoDriveByEncoder_Linear extends LinearOpMode {
+public class HaroldRedHardCenter extends LinearOpMode {
 
     /* Declare OpMode members. */
     HardwareHarold         robot   = new HardwareHarold();   // Use a Pushbot's hardware
     private ElapsedTime     runtime = new ElapsedTime();
 
     static final double     COUNTS_PER_MOTOR_REV    = 1120;    // eg: AndyMark Motor Encoder
-    static final double     DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP
-    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
-    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-                                                      (WHEEL_DIAMETER_INCHES * 3.1415);
+    static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
+    static final double WHEEL_DIAMETER_CENTIMETERS = 10.16 ;     // For figuring circumference
+    static final double COUNTS_PER_CENTIMETERS = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+                                                      (WHEEL_DIAMETER_CENTIMETERS * 3.1415);
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 0.5;
 
@@ -108,13 +105,29 @@ public class HaroldAutoDriveByEncoder_Linear extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-
+        robot.leftArm.setPosition(0.3);
+        robot.rightArm.setPosition(0.8);
+        sleep(1000);
+        robot.lifter.setPower(-1);
+        sleep(700);
+        robot.lifter.setPower(0.0);
+        encoderDrive(TURN_SPEED,30.48,-30.48,4.0);
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(DRIVE_SPEED,  14,  14, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
-        encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
-        encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
-
+        encoderDrive(DRIVE_SPEED,  81,  81, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
+       encoderDrive(TURN_SPEED,   30.48, -30.48, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout (12 inches did 180) (30.48 is 90)
+        encoderDrive(DRIVE_SPEED, 23, 23, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+        robot.leftArm.setPosition(0.8);
+        robot.rightArm.setPosition(0.3);
+        sleep(1000);
+        encoderDrive(DRIVE_SPEED,-6,-6,4.0);
+//        robot.leftArm.setPosition(0.3);
+//        robot.rightArm.setPosition(0.8);
+//        encoderDrive(DRIVE_SPEED,2,2,4.0);
+        robot.lifter.setPower(1);
+        sleep(650);
+        robot.lifter.setPower(0.0);
+        encoderDrive(DRIVE_SPEED,2,2,4.0);
 //        robot.leftClaw.setPosition(1.0);            // S4: Stop and close the claw.
 //        robot.rightClaw.setPosition(0.0);
 //        sleep(1000);     // pause for servos to move
@@ -132,17 +145,18 @@ public class HaroldAutoDriveByEncoder_Linear extends LinearOpMode {
      *  3) Driver stops the opmode running.
      */
     public void encoderDrive(double speed,
-                             double leftInches, double rightInches,
+                             double leftCentimeters, double rightCentimeters,
                              double timeoutS) {
         int newLeftTarget;
         int newRightTarget;
-
+        leftCentimeters = leftCentimeters *-1;
+        rightCentimeters = rightCentimeters*-1;
         // Ensure that the opmode is still active
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            newLeftTarget = robot.leftMotor.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightTarget = robot.rightMotor.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+            newLeftTarget = robot.leftMotor.getCurrentPosition() + (int)(leftCentimeters * COUNTS_PER_CENTIMETERS);
+            newRightTarget = robot.rightMotor.getCurrentPosition() + (int)(rightCentimeters * COUNTS_PER_CENTIMETERS);
             robot.leftMotor.setTargetPosition(newLeftTarget);
             robot.rightMotor.setTargetPosition(newRightTarget);
 
