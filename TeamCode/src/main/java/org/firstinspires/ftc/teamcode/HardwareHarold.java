@@ -79,7 +79,7 @@ public class HardwareHarold
 //        rightClaw = hwMap.servo.get("right_hand");
         whacker.setPosition(0.0);
         leftArm.setPosition(0.9);
-        rightArm.setPosition(0.0);
+        rightArm.setPosition(0.15);
 //        rightClaw.setPosition(MID_SERVO);
     }
 

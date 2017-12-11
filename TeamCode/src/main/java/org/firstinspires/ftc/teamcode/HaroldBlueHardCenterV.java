@@ -36,11 +36,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcontroller.external.samples.ConceptVuforiaNavigation;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuMarkInstanceId;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
@@ -67,9 +62,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  * is explained in {@link ConceptVuforiaNavigation}.
  */
 
-@Autonomous(name="Red Dard", group ="hHrold")
+@Autonomous(name="Blue Hard", group ="Vuforia")
 
-public class bobthebuilder extends LinearOpMode {
+public class HaroldBlueHardCenterV extends LinearOpMode {
     /* Declare OpMode members. */
     HardwareHarold         robot   = new HardwareHarold();   // Use a Pushbot's hardware
     private ElapsedTime runtime = new ElapsedTime();
@@ -133,13 +128,20 @@ public class bobthebuilder extends LinearOpMode {
         VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
         VuforiaTrackable relicTemplate = relicTrackables.get(0);
         relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
-
+        robot.init(hardwareMap);
         telemetry.addData(">", "Press Play to start");
         telemetry.update();
         waitForStart();
 
         relicTrackables.activate();
         runtime.reset();
+        robot.leftArm.setPosition(0.3);
+        robot.rightArm.setPosition(0.5);
+        sleep(1000);
+        robot.lifter.setPower(-1);
+        sleep(700);
+        robot.lifter.setPower(0.0);
+        encoderDrive(TURN_SPEED,-14.48,14.48,4.0);
         while (Position=="N"&& runtime.seconds() < 7) {
 
             /**
@@ -155,13 +157,13 @@ public class bobthebuilder extends LinearOpMode {
                  * loop until this condition occurs, then move on to act accordingly depending
                  * on which VuMark was visible. */
                 telemetry.addData("VuMark", "%s visible", vuMark);
-                if(vuMark == RelicRecoveryVuMark.CENTER ){
-                    Position = "C";
-                } else if (vuMark == RelicRecoveryVuMark.LEFT){
-                    Position = "L";
-                } else if (vuMark == RelicRecoveryVuMark.RIGHT) {
-                    Position = "R";
-                }
+                    if(vuMark == RelicRecoveryVuMark.CENTER ){
+                        Position = "C";
+                    } else if (vuMark == RelicRecoveryVuMark.LEFT){
+                        Position = "L";
+                    } else if (vuMark == RelicRecoveryVuMark.RIGHT) {
+                        Position = "R";
+                    }
 
             }
             else {
@@ -170,71 +172,36 @@ public class bobthebuilder extends LinearOpMode {
 
             telemetry.update();
         }
+        sleep(1000);
+
+        encoderDrive(TURN_SPEED,   -16.48, 16.48, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout (12 inches did 180) (30.48 is 90)
+        //TODO: different positions
         if (Position == "C"){
-            waitForStart();
-            robot.leftArm.setPosition(0.3);
-            robot.rightArm.setPosition(0.5);
-            sleep(1000);
-            robot.lifter.setPower(-1);
-            sleep(700);
-            robot.lifter.setPower(0.0);
-            encoderDrive(TURN_SPEED,45.72,-45.72,4.0);
-            // Step through each leg of the path,
+            encoderDrive(TURN_SPEED,81,81,4.0);
+            // Actually center
+            // screw lined up with screw on red
+        } else if (Position == "L"){
             // Note: Reverse movement is obtained by setting a negative distance (not speed)
-            encoderDrive(DRIVE_SPEED,  81,  81, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
-            encoderDrive(TURN_SPEED,   30.48, -30.48, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout (12 inches did 180) (30.48 is 90)
-            encoderDrive(DRIVE_SPEED, 23, 23, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
-            robot.leftArm.setPosition(0.8);
-            robot.rightArm.setPosition(0.0);
-            sleep(1000);
-            encoderDrive(DRIVE_SPEED,-6,-6,4.0);
-//        robot.leftArm.setPosition(0.3);
-//        robot.rightArm.setPosition(0.8);
-//        encoderDrive(DRIVE_SPEED,2,2,4.0);
-            robot.lifter.setPower(1);
-            sleep(650);
-            robot.lifter.setPower(0.0);
-            encoderDrive(DRIVE_SPEED,2,2,4.0);
-//        robot.leftClaw.setPosition(1.0);            // S4: Stop and close the claw.
-//        robot.rightClaw.setPosition(0.0);
-//        sleep(1000);     // pause for servos to move
-
-            telemetry.addData("Path", "Complete");
-            telemetry.update();
-        } else if (Position == "R"){
-            robot.leftArm.setPosition(0.3);
-            robot.rightArm.setPosition(0.5);
-            sleep(1000);
-            robot.lifter.setPower(-1);
-            sleep(700);
-            robot.lifter.setPower(0.0);
-            encoderDrive(TURN_SPEED,45.72,-45.72,4.0);
-            // Step through each leg of the path,
-            // Note: Reverse movement is obtained by setting a negative distance (not speed)
-            encoderDrive(DRIVE_SPEED,  65,  65, 5.0);  // code that determines which position
-            encoderDrive(TURN_SPEED,   30.48, -30.48, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout (12 inches did 180) (30.48 is 90)
-            encoderDrive(DRIVE_SPEED, 23, 23, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
-            robot.leftArm.setPosition(0.8);
-            robot.rightArm.setPosition(0.0);
-            sleep(1000);
-            encoderDrive(DRIVE_SPEED,-6,-6,4.0);
-//        robot.leftArm.setPosition(0.3);
-//        robot.rightArm.setPosition(0.8);
-//        encoderDrive(DRIVE_SPEED,2,2,4.0);
-            robot.lifter.setPower(1);
-            sleep(650);
-            robot.lifter.setPower(0.0);
-            encoderDrive(DRIVE_SPEED,2,2,4.0);
-//        robot.leftClaw.setPosition(1.0);            // S4: Stop and close the claw.
-//        robot.rightClaw.setPosition(0.0);
-//        sleep(1000);     // pause for servos to move
-
-            telemetry.addData("Path", "Complete");
-            telemetry.update();
+            encoderDrive(DRIVE_SPEED,  55,  55, 5.0);  // code that determines which position
+            // Actually L
         } else  {
-            robot.leftArm.setPosition(0.3);
-            robot.rightArm.setPosition(0.5);
+            // Note: Reverse movement is obtained by setting a negative distance (not speed)
+            encoderDrive(DRIVE_SPEED,  90,  90  , 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
         }
+
+        // TODO: Base code
+        encoderDrive(TURN_SPEED,   -30.48, 30.48, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout (12 inches did 180) (30.48 is 90)
+        encoderDrive(DRIVE_SPEED, 23, 23, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+        robot.leftArm.setPosition(0.8);
+        robot.rightArm.setPosition(0.125);
+        sleep(1000);
+        encoderDrive(DRIVE_SPEED,-6,-6,4.0);
+//        robot.leftArm.setPosition(0.3);
+//        encoderDrive(DRIVE_SPEED,2,2,4.0);
+        encoderDrive(DRIVE_SPEED,2,2,4.0);
+//        robot.leftClaw.setPosition(1.0);            // S4: Stop and close the claw.
+//        robot.rightClaw.setPosition(0.0);
+//        sleep(1000);     // pause for servos to move
     }
 
 

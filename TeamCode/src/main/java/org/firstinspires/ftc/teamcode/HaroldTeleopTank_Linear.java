@@ -196,10 +196,10 @@ public class HaroldTeleopTank_Linear extends LinearOpMode {
 
             //TODO: Servos
             // Use gamepad Y & A raise and lower the arm
-            if (gamepad1.a) {
+            if (gamepad1.y) {
                 whackerPosition = 0;
             }
-            else if (gamepad1.y) {
+            else if (gamepad1.a) {
                 whackerPosition = 0.4;
             }
             if(gamepad1.x){
@@ -217,7 +217,7 @@ public class HaroldTeleopTank_Linear extends LinearOpMode {
 //            // Move both servos to new position.
             // at 0 left is all the way in and right is all the way out
             whackerPosition  = Range.clip(whackerPosition, 0.0, 0.6);
-            rightArmPosition = Range.clip(rightArmPosition, 0.0, 0.5);
+            rightArmPosition = Range.clip(rightArmPosition, 0.15, 0.5);
             leftArmPosition = Range.clip(leftArmPosition, 0.3,0.8);
             robot.whacker.setPosition(whackerPosition);
             robot.leftArm.setPosition(leftArmPosition);
