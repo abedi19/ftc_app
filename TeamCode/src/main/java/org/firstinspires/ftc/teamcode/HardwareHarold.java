@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -25,16 +27,17 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class HardwareHarold
 {
     /* Public OpMode members. */
-    public DcMotor  leftMotor   = null;
-    public DcMotor  rightMotor  = null;
+    public DcMotor leftMotor   = null;
+    public DcMotor rightMotor  = null;
     public DcMotor lifter = null;
     public Servo whacker =null;
     public Servo leftArm = null;
     public Servo rightArm = null;
+    public AnalogInput receiver = null;
+    public DigitalChannel laser = null;
+    // public Digital
 
-    public static final double MID_SERVO       =  0.5 ;
-    public static final double ARM_UP_POWER    =  0.45 ;
-    public static final double ARM_DOWN_POWER  = -0.45 ;
+
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
@@ -55,8 +58,8 @@ public class HardwareHarold
         leftMotor   = hwMap.dcMotor.get("left_motor");
         rightMotor  = hwMap.dcMotor.get("right_motor");
         lifter = hwMap.dcMotor.get("lifter");
-        leftMotor.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors: done
-        rightMotor.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motor:done
+        leftMotor.setDirection(DcMotor.Direction.FORWARD); // Set to FORWARD if using AndyMark motors: done
+        rightMotor.setDirection(DcMotor.Direction.REVERSE);// Set to REVERSE if using AndyMark motor:done
         // Set all motors to zero power
         leftMotor.setPower(0.0);
         rightMotor.setPower(0.0);
@@ -67,7 +70,7 @@ public class HardwareHarold
         leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lifter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-       // armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        // armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         leftMotor.setPower(0.0);
         rightMotor.setPower(0.0);
@@ -76,10 +79,12 @@ public class HardwareHarold
         whacker = hwMap.servo.get("stick_servo");
         leftArm = hwMap.servo.get("lf");
         rightArm = hwMap.servo.get("rf");
+        receiver = hwMap.analogInput.get("receiver");
+        laser = hwMap.digitalChannel.get("laser");
 //        rightClaw = hwMap.servo.get("right_hand");
         whacker.setPosition(0.0);
-        leftArm.setPosition(0.9);
-        rightArm.setPosition(0.15);
+        rightArm.setPosition(0.9); //0.9
+        leftArm.setPosition(0.15);//0.15
 //        rightClaw.setPosition(MID_SERVO);
     }
 

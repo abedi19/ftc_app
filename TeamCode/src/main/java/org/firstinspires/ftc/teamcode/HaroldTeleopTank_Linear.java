@@ -33,6 +33,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.HardwareK9bot;
@@ -60,12 +62,15 @@ public class HaroldTeleopTank_Linear extends LinearOpMode {
 
     /* Declare OpMode members. */
     HardwareHarold robot           = new HardwareHarold();              // Use Harold's hardware
-   double          whackerPosition     = 0.0;                   // Servo safe position
+    double          whackerPosition     = 0.0;                   // Servo safe position
     double leftArmPosition= 0.5;
     double rightArmPosition = 0.5;
-//    double          clawPosition    = robot.CLAW_HOME;                  // Servo safe position
+    //    double          clawPosition    = robot.CLAW_HOME;                  // Servo safe position
 //    final double    CLAW_SPEED      = 0.01 ;                            // sets rate to move servo
 //    final double    ARM_SPEED       = 0.01 ;                            // sets rate to move servo
+    private ElapsedTime runTime = new ElapsedTime();
+    double storedTime = runTime.seconds();
+
 
     @Override
     public void runOpMode() {
@@ -74,18 +79,26 @@ public class HaroldTeleopTank_Linear extends LinearOpMode {
         double up;
         double down;
         double position;
-
+        //Laser tag variables:
+        double hitNumber = 0;
+        double receiverValue;
+        double threshHold = 1; //threshHold voltage for recording a hit
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
          */
         robot.init(hardwareMap);
 
+        //receiverValue = robot.receiver.getVoltage();
+        //digital port := output
+        robot.laser.setMode(DigitalChannel.Mode.OUTPUT);
+        robot.laser.setState(false); //off
+
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Say", "Hello Aman");    //
         telemetry.update();
-
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
+        robot.laser.setState(true);//on
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -103,9 +116,9 @@ public class HaroldTeleopTank_Linear extends LinearOpMode {
 
 
             // triggers lifters
-            if(gamepad1.left_trigger >0) { //&& (robot.lifter.getCurrentPosition() <-48)){
+            if(gamepad1.left_trigger >0) {
                 robot.lifter.setPower(1*gamepad1.left_trigger);
-            } else if (gamepad1.right_trigger>0) { //&& (robot.lifter.getCurrentPosition() > -12876.1)){
+            } else if (gamepad1.right_trigger>0) {
                 robot.lifter.setPower(-1*gamepad1.right_trigger);
             } else {
                 robot.lifter.setPower(0.0);
@@ -193,13 +206,13 @@ public class HaroldTeleopTank_Linear extends LinearOpMode {
             }
 
 
-
+//
             //TODO: Servos
             // Use gamepad Y & A raise and lower the arm
-            if (gamepad1.y) {
+            if (gamepad1.a) {
                 whackerPosition = 0;
             }
-            else if (gamepad1.a) {
+            else if (gamepad1.y) {
                 whackerPosition = 0.4;
             }
             if(gamepad1.x){
@@ -213,27 +226,43 @@ public class HaroldTeleopTank_Linear extends LinearOpMode {
                 position = robot.lifter.getCurrentPosition();
             }
 
-//
+//left is acutally right and right ascutally left
 //            // Move both servos to new position.
             // at 0 left is all the way in and right is all the way out
-            whackerPosition  = Range.clip(whackerPosition, 0.0, 0.6);
-            rightArmPosition = Range.clip(rightArmPosition, 0.15, 0.5);
-            leftArmPosition = Range.clip(leftArmPosition, 0.3,0.8);
+            //   whackerPosition  = Range.clip(whackerPosition, 0.0, 0.6);
+            leftArmPosition = Range.clip(leftArmPosition, 0.15, 0.7); // GM: Changed min parameter to accommodate new servo mount position
+            rightArmPosition = Range.clip(rightArmPosition, 0.15,0.9);
             robot.whacker.setPosition(whackerPosition);
             robot.leftArm.setPosition(leftArmPosition);
             robot.rightArm.setPosition(rightArmPosition);
-//            robot.arm.setPosition(armPosition);
-//            clawPosition = Range.clip(clawPosition, robot.CLAW_MIN_RANGE, robot.CLAW_MAX_RANGE);
-//            robot.claw.setPosition(clawPosition);
-//
-//            // Send telemetry message to signify robot running;
-//            telemetry.addData("arm",   "%.2f", armPosition);
-//            telemetry.addData("claw",  "%.2f", clawPosition);
-            telemetry.addData("position","%.2f", position);
+
             telemetry.addData("left",  "%.2f", left);
             telemetry.addData("right", "%.2f", right);
-            telemetry.update();
 
+
+//TODO: LAZOR STUFF
+            //Receiver:
+            receiverValue = robot.receiver.getVoltage();
+            if(receiverValue > threshHold){
+                hitNumber ++;
+                telemetry.addData("hitNumber","I'm hit");
+                telemetry.addData("hitNumber",hitNumber);
+                telemetry.update();
+                sleep(5000);
+            }
+
+            //Laser:
+//            if(gamepad1.left_bumper){
+//                 storedTime = runTime.seconds();
+//                while(runTime.seconds()-storedTime < 1.5) {
+//                    robot.laser.setState(true);
+//                }
+//                robot.laser.setState(false);
+//            }
+
+
+
+            telemetry.update();
             // Pause for 40 mS each cycle = update 25 times a second.
             sleep(40);
         }

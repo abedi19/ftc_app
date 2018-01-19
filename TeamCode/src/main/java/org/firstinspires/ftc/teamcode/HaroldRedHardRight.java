@@ -67,8 +67,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class HaroldRedHardRight extends LinearOpMode {
 
     /* Declare OpMode members. */
-    HardwareHarold         robot   = new HardwareHarold();   // Use a Pushbot's hardware
-    private ElapsedTime     runtime = new ElapsedTime();
+    HardwareHarold robot   = new HardwareHarold();   // Use a Pushbot's hardware
+    private ElapsedTime runtime = new ElapsedTime();
 
     static final double     COUNTS_PER_MOTOR_REV    = 1120;    // eg: AndyMark Motor Encoder
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP

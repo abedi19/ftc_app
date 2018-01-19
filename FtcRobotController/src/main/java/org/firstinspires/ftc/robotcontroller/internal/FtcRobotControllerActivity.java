@@ -116,7 +116,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 @SuppressWarnings("WeakerAccess")
 public class FtcRobotControllerActivity extends Activity
-  {
+{
   public static final String TAG = "RCActivity";
   public String getTag() { return TAG; }
 
@@ -233,7 +233,7 @@ public class FtcRobotControllerActivity extends Activity
         RobotLog.vv(TAG, "disabling Dragonboard and exiting robot controller");
         DragonboardLynxDragonboardIsPresentPin.getInstance().setState(false);
         AppUtil.getInstance().finishRootActivityAndExitApp();
-        }
+      }
       else {
         // Double-sure check that we can talk to the DB over the serial TTY
         DragonboardLynxDragonboardIsPresentPin.getInstance().setState(true);
@@ -461,8 +461,8 @@ public class FtcRobotControllerActivity extends Activity
       } else {
         Intent programmingModeIntent = new Intent(AppUtil.getDefContext(), ProgrammingModeActivity.class);
         programmingModeIntent.putExtra(
-            LaunchActivityConstantsList.PROGRAMMING_MODE_ACTIVITY_PROGRAMMING_WEB_HANDLERS,
-            new LocalByRefIntentExtraHolder(programmingWebHandlers));
+                LaunchActivityConstantsList.PROGRAMMING_MODE_ACTIVITY_PROGRAMMING_WEB_HANDLERS,
+                new LocalByRefIntentExtraHolder(programmingWebHandlers));
         startActivity(programmingModeIntent);
       }
       return true;
@@ -494,7 +494,7 @@ public class FtcRobotControllerActivity extends Activity
       startActivityForResult(intentConfigure, RequestCode.CONFIGURE_ROBOT_CONTROLLER.ordinal());
     }
     else if (id == R.id.action_settings) {
-	  // historical: this once erroneously used FTC_CONFIGURE_REQUEST_CODE_ROBOT_CONTROLLER
+      // historical: this once erroneously used FTC_CONFIGURE_REQUEST_CODE_ROBOT_CONTROLLER
       Intent settingsIntent = new Intent(AppUtil.getDefContext(), FtcRobotControllerSettingsActivity.class);
       startActivityForResult(settingsIntent, RequestCode.SETTINGS_ROBOT_CONTROLLER.ordinal());
       return true;
@@ -510,7 +510,7 @@ public class FtcRobotControllerActivity extends Activity
       return true;
     }
 
-   return super.onOptionsItemSelected(item);
+    return super.onOptionsItemSelected(item);
   }
 
   @Override
@@ -625,35 +625,35 @@ public class FtcRobotControllerActivity extends Activity
     }
   }
 
-    public Camera camera;
-    private Camera openFrontFacingCamera() {
-      int cameraId = -1;
-      Camera cam = null;
-      int numberOfCameras = Camera.getNumberOfCameras();
-      for (int i = 0; i < numberOfCameras; i++) {
-        Camera.CameraInfo info = new Camera.CameraInfo();
-        Camera.getCameraInfo(i, info);
-        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-          cameraId = i;
-          break;
-        }
+  public Camera camera;
+  private Camera openFrontFacingCamera() {
+    int cameraId = -1;
+    Camera cam = null;
+    int numberOfCameras = Camera.getNumberOfCameras();
+    for (int i = 0; i < numberOfCameras; i++) {
+      Camera.CameraInfo info = new Camera.CameraInfo();
+      Camera.getCameraInfo(i, info);
+      if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+        cameraId = i;
+        break;
       }
-      try {
-        cam = Camera.open(cameraId);
-      } catch (Exception e) {
+    }
+    try {
+      cam = Camera.open(cameraId);
+    } catch (Exception e) {
 
+    }
+    return cam;
+  }
+
+  public void initPreview(final Camera camera, final CameraOp context, final Camera.PreviewCallback previewCallback) {
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        context.preview = new CameraPreview(FtcRobotControllerActivity.this, camera, previewCallback);
+        FrameLayout previewLayout = (FrameLayout) findViewById(R.id.previewLayout);
+        previewLayout.addView(context.preview);
       }
-      return cam;
-    }
-
-    public void initPreview(final Camera camera, final CameraOp context, final Camera.PreviewCallback previewCallback) {
-      runOnUiThread(new Runnable() {
-        @Override
-        public void run() {
-          context.preview = new CameraPreview(FtcRobotControllerActivity.this, camera, previewCallback);
-          FrameLayout previewLayout = (FrameLayout) findViewById(R.id.previewLayout);
-          previewLayout.addView(context.preview);
-        }
-      });
-    }
+    });
+  }
 }

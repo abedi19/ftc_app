@@ -25,6 +25,8 @@ public class CameraOp extends OpMode {
     private YuvImage yuvImage = null;
     private int looped = 0;
     private String data;
+    public static String colorString = "";
+
 
     private int red(int pixel) {
         return (pixel >> 16) & 0xff;
@@ -101,7 +103,6 @@ public class CameraOp extends OpMode {
                 }
             }
             int color = highestColor(redValue, greenValue, blueValue);
-            String colorString = "";
             switch (color) {
                 case 0:
                     colorString = "RED";

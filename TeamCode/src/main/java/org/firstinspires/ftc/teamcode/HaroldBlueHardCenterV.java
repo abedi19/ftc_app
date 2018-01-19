@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.ConceptVuforiaNavigation;
+import org.firstinspires.ftc.robotcontroller.internal.CameraOp;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
@@ -66,7 +67,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 public class HaroldBlueHardCenterV extends LinearOpMode {
     /* Declare OpMode members. */
-    HardwareHarold         robot   = new HardwareHarold();   // Use a Pushbot's hardware
+    HardwareHarold robot   = new HardwareHarold();   // Use a Pushbot's hardware
     private ElapsedTime runtime = new ElapsedTime();
 
     static final double     COUNTS_PER_MOTOR_REV    = 1120;    // eg: AndyMark Motor Encoder
@@ -132,8 +133,9 @@ public class HaroldBlueHardCenterV extends LinearOpMode {
         telemetry.addData(">", "Press Play to start");
         telemetry.update();
         waitForStart();
-
         relicTrackables.activate();
+
+//TODO: Glyph Code
         runtime.reset();
         robot.leftArm.setPosition(0.3);
         robot.rightArm.setPosition(0.5);
@@ -141,7 +143,7 @@ public class HaroldBlueHardCenterV extends LinearOpMode {
         robot.lifter.setPower(-1);
         sleep(700);
         robot.lifter.setPower(0.0);
-        encoderDrive(TURN_SPEED,-14.48,14.48,4.0);
+      //  encoderDrive(TURN_SPEED,-14.48,14.48,4.0);
         while (Position=="N"&& runtime.seconds() < 7) {
 
             /**
@@ -172,9 +174,9 @@ public class HaroldBlueHardCenterV extends LinearOpMode {
 
             telemetry.update();
         }
-        sleep(1000);
 
-        encoderDrive(TURN_SPEED,   -16.48, 16.48, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout (12 inches did 180) (30.48 is 90)
+
+        encoderDrive(TURN_SPEED,   -30.48, 30.48, 4.0);  // S2: Turn left 12 Inches with 4 Sec timeout (12 inches did 180) (30.48 is 90)
         //TODO: different positions
         if (Position == "C"){
             encoderDrive(TURN_SPEED,81,81,4.0);
@@ -186,11 +188,11 @@ public class HaroldBlueHardCenterV extends LinearOpMode {
             // Actually L
         } else  {
             // Note: Reverse movement is obtained by setting a negative distance (not speed)
-            encoderDrive(DRIVE_SPEED,  90,  90  , 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
+            encoderDrive(DRIVE_SPEED,  100,  100  , 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
         }
 
         // TODO: Base code
-        encoderDrive(TURN_SPEED,   -30.48, 30.48, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout (12 inches did 180) (30.48 is 90)
+        encoderDrive(TURN_SPEED,   -30.48, 30.48, 4.0);  // S2: Turn left 12 Inches with 4 Sec timeout (12 inches did 180) (30.48 is 90)
         encoderDrive(DRIVE_SPEED, 23, 23, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
         robot.leftArm.setPosition(0.8);
         robot.rightArm.setPosition(0.125);

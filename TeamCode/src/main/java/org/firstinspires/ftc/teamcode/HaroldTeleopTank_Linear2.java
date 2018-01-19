@@ -138,7 +138,6 @@ public class HaroldTeleopTank_Linear2 extends LinearOpMode {
             whackerPosition  = Range.clip(whackerPosition, 0.0, 0.6);
             rightArmPosition = Range.clip(rightArmPosition, 0.3, 0.8);
             leftArmPosition = Range.clip(leftArmPosition, 0.3,0.8);
-            robot.whacker.setPosition(whackerPosition);
             robot.leftArm.setPosition(leftArmPosition);
             robot.rightArm.setPosition(rightArmPosition);
 //            robot.arm.setPosition(armPosition);
