@@ -33,7 +33,7 @@ public class HardwareHarold
     public Servo whacker =null;
     public Servo leftArm = null;
     public Servo rightArm = null;
-    public AnalogInput receiver = null;
+    public DigitalChannel receiver = null;
     public DigitalChannel laser = null;
     // public Digital
 
@@ -79,7 +79,7 @@ public class HardwareHarold
         whacker = hwMap.servo.get("stick_servo");
         leftArm = hwMap.servo.get("lf");
         rightArm = hwMap.servo.get("rf");
-        receiver = hwMap.analogInput.get("receiver");
+        receiver = hwMap.digitalChannel.get("receiver");
         laser = hwMap.digitalChannel.get("laser");
 //        rightClaw = hwMap.servo.get("right_hand");
         whacker.setPosition(0.0);

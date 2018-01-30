@@ -29,15 +29,12 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.robotcontroller.external.samples.HardwareK9bot;
 
 /**
  * This OpMode uses the common HardwareK9bot class to define the devices on the robot.
@@ -56,9 +53,9 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwareK9bot;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Harold: Telop Tank", group="Harold")
+@TeleOp(name="Harold: Lazor Test", group="Harold")
 
-public class HaroldTeleopTank_Linear extends LinearOpMode {
+public class LazorTest extends LinearOpMode {
 
     /* Declare OpMode members. */
     HardwareHarold robot           = new HardwareHarold();              // Use Harold's hardware
